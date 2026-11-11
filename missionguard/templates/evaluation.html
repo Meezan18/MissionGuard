@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Evaluation against baselines</h1>
+<div class="sub">{{ res.n_scenarios }} synthetic LEO scenarios · {{ res.n_screened }} above the screening threshold (averages below) ·
+{{ res.low_confidence }} low-confidence recommendations flagged · mean decision time {{ '%.2f'|format(res.mean_decision_time_s) }} s</div>
+<div class="card">
+<table>
+<tr><th>Method</th><th class="num">Risk reduction</th><th class="num">Avg. Δv (m/s)</th><th class="num">Mission preservation</th>
+<th class="num">New conjunctions / event</th><th class="num">Safe (Pc ≤ 1e-4)</th></tr>
+{% for m, s in res.summary.items() %}
+<tr class="{{ 'top' if m == 'MissionGuard' }}"><td>{{ m }}</td><td class="num">{{ '%.3f'|format(s.risk_reduction) }}</td>
+<td class="num">{{ '%.3f'|format(s.dv) }}</td><td class="num">{{ '%.3f'|format(s.mission_preservation) }}</td>
+<td class="num">{{ '%.3f'|format(s.new_conjunctions) }}</td><td class="num">{{ '%.0f'|format(s.safe_rate*100) }} %</td></tr>
+{% endfor %}
+</table>
+</div>
+{% endblock %}

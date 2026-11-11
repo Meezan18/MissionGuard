@@ -1,0 +1,36 @@
+{
+  "n_scenarios": 48,
+  "n_screened": 37,
+  "low_confidence": 14,
+  "mean_decision_time_s": 0.09297730431249107,
+  "summary": {
+    "Probability threshold": {
+      "risk_reduction": 1.0,
+      "dv": 0.33513513513513515,
+      "mission_preservation": 0.8929522705266412,
+      "new_conjunctions": 0.0,
+      "safe_rate": 1.0
+    },
+    "Fuel minimization": {
+      "risk_reduction": 0.9998468038064645,
+      "dv": 0.05270270270270271,
+      "mission_preservation": 0.8707340048301146,
+      "new_conjunctions": 0.02702702702702703,
+      "safe_rate": 1.0
+    },
+    "Risk + Fuel": {
+      "risk_reduction": 0.9999753846071402,
+      "dv": 0.0554054054054054,
+      "mission_preservation": 0.8515482550345026,
+      "new_conjunctions": 0.08108108108108109,
+      "safe_rate": 1.0
+    },
+    "MissionGuard": {
+      "risk_reduction": 0.9999596037320091,
+      "dv": 0.06621621621621618,
+      "mission_preservation": 0.980938080938081,
+      "new_conjunctions": 0.0,
+      "safe_rate": 1.0
+    }
+  }
+}

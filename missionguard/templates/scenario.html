@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Conjunction CA-{{ '%03d'|format(sc.scenario_id) }} · {{ sc.sat_name }} vs {{ sc.primary.object_id }}</h1>
+<div class="sub">Altitude {{ '%.0f'|format(sc.altitude_km) }} km · TCA T+{{ '%.1f'|format(sc.primary.tca) }} h · CDM age {{ '%.0f'|format(sc.cdm_age_h) }} h</div>
+
+<div class="grid g3">
+  <div class="card">
+    <h2>Conjunction alert</h2>
+    <div class="kv">
+      <div>Collision probability</div><div class="big">{{ d.pc_before|sci }}</div>
+      <div>Miss distance</div><div>{{ '%.0f'|format(d.candidates[0].miss_km*1000) }} m</div>
+      <div>Relative speed</div><div>{{ '%.1f'|format(sc.primary.rel_speed) }} km/s</div>
+      <div>Hard-body radius</div><div>{{ '%.0f'|format(sc.primary.hbr*1000) }} m</div>
+      <div>Secondary objects</div><div>{{ sc.secondaries|length }} later encounters screened</div>
+    </div>
+    <h2 style="margin-top:14px">Spacecraft state</h2>
+    <div class="kv" style="margin-bottom:6px"><div>Propellant</div><div>{{ '%.2f'|format(sc.fuel_available) }} m/s (reserve {{ '%.1f'|format(sc.fuel_reserve) }})</div></div>
+    {% for n, v in [('Propulsion', sc.health.propulsion), ('Power', sc.health.power), ('ADCS', sc.health.adcs), ('Comms', sc.health.comms)] %}
+    <div class="hb"><span>{{ n }}</span><div class="bar"><i style="width:{{ (v*100)|round }}%"></i></div><span>{{ '%.2f'|format(v) }}</span></div>
+    {% endfor %}
+  </div>
+
+  <div class="card">
+    <h2>Recommended action</h2>
+    {% if not d.screened %}
+      <div class="reco">No action – continue monitoring</div>
+      <div>Pc is below the screening threshold.</div>
+    {% else %}
+      <div class="reco">{{ rec.label }}</div>
+      <div class="kv">
+        <div>Pc after maneuver</div><div><b>{{ rec.pc|sci }}</b> (limit {{ '%.0e'|format(PC_MAX) }})</div>
+        <div>Miss distance after</div><div>{{ '%.0f'|format(rec.miss_km*1000) }} m</div>
+        <div>Δv</div><div>{{ '%.2f'|format(rec.dv_mag) }} m/s</div>
+        <div>Burn time</div><div>T+{{ '%.2f'|format(rec.burn_time) }} h</div>
+        <div>Utility U(a)</div><div>{{ '%.3f'|format(rec.utility) }}</div>
+        <div>Confidence C(a)</div><div><b>{{ '%.2f'|format(rec.confidence) }}</b>
+          <span style="color:#5b6475">(model {{ '%.2f'|format(rec.confidence_parts[0]) }} · data {{ '%.2f'|format(rec.confidence_parts[1]) }} · agreement {{ '%.2f'|format(rec.confidence_parts[2]) }})</span></div>
+      </div>
+      {% if rec.confidence < LOW %}<div class="flag">⚠ Low confidence – detailed operator review required</div>{% endif %}
+      {% if not rec.feasible %}<div class="flag">⚠ No candidate meets all constraints: {{ rec.violations|join(', ') }}</div>{% endif %}
+      {% if log %}<div class="logged">Operator decision recorded: {{ log.decision|capitalize }} · {{ log.time }}</div>{% endif %}
+      <form method="post" action="{{ url_for('record', sid=sc.scenario_id) }}" class="btns">
+        <button class="ok" name="decision" value="approved">Approve maneuver</button>
+        <button class="no" name="decision" value="rejected">Reject</button>
+      </form>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Why this maneuver? (SHAP contributions to U(a))</h2>
+    {% if shap %}{{ shap|safe }}
+    <div class="legend"><span><b style="background:#2e9e6b"></b>raises suitability</span><span><b style="background:#d9534f"></b>lowers suitability</span><span>relative to the average feasible option</span></div>
+    {% else %}<div class="sub">No maneuver required.</div>{% endif %}
+  </div>
+</div>
+
+<div class="card" style="margin-top:16px">
+  <h2>Mission timeline</h2>
+  {{ timeline|safe }}
+  <div class="legend"><span><b style="background:#9ec5fe"></b>low-priority op</span><span><b style="background:#5b8def"></b>medium</span><span><b style="background:#0b3d91"></b>critical</span>
+  <span><b style="background:#2e9e6b"></b>ground-station pass</span><span><b style="background:#e07b00"></b>burn</span><span><b style="background:#c62828"></b>TCA</span><span><b style="background:#7b1fa2;border-radius:50%"></b>later encounter</span></div>
+</div>
+
+{% if d.screened %}
+<div class="card" style="margin-top:16px">
+  <h2>Candidate comparison (top {{ ranked|length }} of {{ d.candidates|length }} generated, {{ d.ranked|length }} feasible)</h2>
+  <table>
+    <tr><th>#</th><th>Maneuver</th><th class="num">Pc after</th><th class="num">Miss (m)</th><th class="num">Δv (m/s)</th>
+    <th class="num">Mission disruption</th><th class="num">New-conj. risk</th><th class="num">Health pen.</th><th class="num">U(a)</th></tr>
+    {% for c in ranked %}
+    <tr class="{{ 'top' if loop.first }}"><td>{{ loop.index }}</td><td>{{ c.label }}</td><td class="num">{{ c.pc|sci }}</td>
+    <td class="num">{{ '%.0f'|format(c.miss_km*1000) }}</td><td class="num">{{ '%.2f'|format(c.dv_mag) }}</td>
+    <td class="num">{{ '%.2f'|format(c.objectives.M) }}</td><td class="num">{{ '%.2f'|format(c.objectives.Q) }}</td>
+    <td class="num">{{ '%.2f'|format(c.objectives.H) }}</td><td class="num">{{ '%.3f'|format(c.utility) }}</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endif %}
+{% endblock %}

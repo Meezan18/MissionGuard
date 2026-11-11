@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MissionGuard – Operator Dashboard</title>
+<style>
+:root{--ink:#14213d;--muted:#5b6475;--line:#dde3ec;--bg:#f4f6fa;--card:#fff;--navy:#0b2545;--accent:#1f6feb;
+--good:#1a7f37;--bad:#c62828;--warn:#b26a00;--p1:#9ec5fe;--p2:#5b8def;--p3:#0b3d91;--comm:#2e9e6b}
+*{box-sizing:border-box}body{margin:0;font:14px/1.45 "Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+header{background:var(--navy);color:#fff;padding:12px 24px;display:flex;align-items:center;gap:18px}
+header .brand{font-weight:700;font-size:18px;letter-spacing:.3px}header .brand span{color:#8fb8ff}
+header nav a{color:#cfe0ff;text-decoration:none;margin-right:16px;font-weight:500}header nav a:hover{color:#fff}
+header .who{margin-left:auto;color:#cfe0ff;font-size:13px}
+main{padding:20px 24px;max-width:1400px;margin:0 auto}
+h1{font-size:20px;margin:0 0 4px}h2{font-size:15px;margin:0 0 10px;color:var(--navy)}
+.sub{color:var(--muted);margin-bottom:16px}
+.grid{display:grid;gap:16px}.g3{grid-template-columns:1fr 1.2fr 1.3fr}.g2{grid-template-columns:1.25fr 1fr}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
+table{width:100%;border-collapse:collapse}th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{font-size:12px;color:var(--muted);font-weight:600;background:#f8fafc}td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.top td{background:#eaf2ff;font-weight:600}tr:hover td{background:#f3f7ff}
+a{color:var(--accent)}.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px}.kv div:nth-child(odd){color:var(--muted)}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:600}
+.hi{background:#fde2e1;color:var(--bad)}.md{background:#fff1d6;color:var(--warn)}.lo{background:#e3f4e8;color:var(--good)}
+.big{font-size:22px;font-weight:700}.reco{font-size:17px;font-weight:700;margin:4px 0 8px}
+.bar{height:8px;background:#e8edf5;border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:var(--accent)}
+.hb{display:grid;grid-template-columns:90px 1fr 40px;align-items:center;gap:8px;margin:4px 0}
+.btns{display:flex;gap:10px;margin-top:12px}button{border:0;border-radius:8px;padding:9px 18px;font-weight:600;cursor:pointer;font-size:14px}
+.ok{background:var(--good);color:#fff}.no{background:#fff;border:1px solid var(--bad);color:var(--bad)}
+.flag{background:#fff1d6;color:var(--warn);border-radius:8px;padding:8px 10px;margin-top:8px;font-weight:600}
+.logged{background:#e3f4e8;color:var(--good);border-radius:8px;padding:8px 10px;margin-top:8px;font-weight:600}
+svg.chart{width:100%;height:auto}.chart .lbl{font-size:12px;fill:#3b4456}.chart .val{font-size:12px;fill:#14213d;font-weight:600}
+.chart .pos{fill:#2e9e6b}.chart .neg{fill:#d9534f}.chart .axis{stroke:#9aa5b8}.chart .lane{stroke:#e3e8f0;stroke-width:20}
+.chart .p1{fill:var(--p1)}.chart .p2{fill:var(--p2)}.chart .p3{fill:var(--p3)}.chart .comm{fill:var(--comm)}
+.chart .burn{stroke:#e07b00;stroke-width:2.5}.chart .tca{stroke:#c62828;stroke-width:2.5;stroke-dasharray:5 3}
+.chart .evt{font-size:11px;fill:#14213d;font-weight:600}.chart .tick{font-size:10px;fill:#6b7385}.chart .sec{fill:#7b1fa2}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:6px;flex-wrap:wrap}.legend b{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:4px;vertical-align:-2px}
+footer{color:var(--muted);font-size:12px;text-align:center;padding:16px}
+</style>
+</head>
+<body>
+<header><div class="brand">Mission<span>Guard</span></div>
+<nav><a href="{{ url_for('index') }}">Conjunction queue</a><a href="{{ url_for('evaluation') }}">Evaluation</a></nav>
+<div class="who">Operator console · Phase I prototype</div></header>
+<main>{% block body %}{% endblock %}</main>
+<footer>MissionGuard – explainable multi-objective decision support for satellite collision avoidance · synthetic Phase I scenarios</footer>
+</body></html>

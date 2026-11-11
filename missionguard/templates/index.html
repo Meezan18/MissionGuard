@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>Conjunction queue</h1>
+<div class="sub">{{ rows|length }} conjunction events · screening threshold Pc ≥ {{ '%.0e'|format(PC_SCREEN) }} · sorted by collision probability</div>
+<div class="card">
+<table>
+<tr><th>Event</th><th>Satellite</th><th>Object</th><th class="num">TCA</th><th class="num">Pc (no action)</th><th>Risk</th>
+<th>Recommendation</th><th class="num">Pc after</th><th class="num">Δv (m/s)</th><th class="num">Confidence</th><th>Operator</th></tr>
+{% for r in rows %}
+<tr>
+<td><a href="{{ url_for('scenario', sid=r.sc.scenario_id) }}">CA-{{ '%03d'|format(r.sc.scenario_id) }}</a></td>
+<td>{{ r.sc.sat_name }}</td><td>{{ r.sc.primary.object_id }}</td>
+<td class="num">T+{{ '%.1f'|format(r.sc.primary.tca) }} h</td>
+<td class="num">{{ r.d.pc_before|sci }}</td>
+<td>{% if r.d.pc_before >= 1e-3 %}<span class="pill hi">High</span>{% elif r.d.screened %}<span class="pill md">Action</span>{% else %}<span class="pill lo">Monitor</span>{% endif %}</td>
+<td>{{ r.rec.label }}</td>
+<td class="num">{{ r.rec.pc|sci }}</td>
+<td class="num">{{ '%.2f'|format(r.rec.dv_mag) }}</td>
+<td class="num">{% if r.d.screened %}{{ '%.2f'|format(r.rec.confidence) }}{% if r.rec.confidence < LOW %} ⚠{% endif %}{% else %}—{% endif %}</td>
+<td>{% if r.log %}{{ r.log.decision|capitalize }}{% elif r.d.screened %}Pending{% else %}—{% endif %}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+{% endblock %}
